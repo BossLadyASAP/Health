@@ -87,12 +87,6 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
           <div className="text-sm text-gray-600">
             Credits: {credits}
           </div>
-          {!user && (
-            <Button onClick={() => setShowAuthDialog(true)} size="sm" className="flex items-center gap-2">
-              <LogIn className="h-4 w-4" />
-              Login
-            </Button>
-          )}
         </div>
       </div>
 

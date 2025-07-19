@@ -89,8 +89,8 @@ export function ChatSidebar({
                       size="sm"
                       className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
                     >
-                      <Bot className="h-4 w-4" />
-                      MediAI
+                      <Plus className="h-4 w-4" />
+                      New Chat
                     </Button>
                     
                     <UserProfileDropdown onSettingsClick={() => setShowSettings(true)} />
