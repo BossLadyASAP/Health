@@ -5,6 +5,7 @@ import { ChatSidebar } from '@/components/ChatSidebar';
 import { ChatInterface } from '@/components/ChatInterface';
 import { HealthTracker } from '@/components/HealthTracker';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { CreditProvider } from '@/context/CreditContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Message, Conversation } from '@/types';
 
@@ -244,7 +245,9 @@ function IndexContent() {
 const Index = () => {
   return (
     <AuthProvider>
-      <IndexContent />
+      <CreditProvider>
+        <IndexContent />
+      </CreditProvider>
     </AuthProvider>
   );
 };

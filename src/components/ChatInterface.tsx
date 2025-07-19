@@ -1,10 +1,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, MessageSquare } from 'lucide-react';
+import { Send, MessageSquare, LogIn } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { VoiceInput } from '@/components/VoiceInput';
 import { Message } from '@/types';
+import { useCreditContext } from '@/context/CreditContext';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthDialog } from './auth/AuthDialog';
 
 interface ChatInterfaceProps {
   conversation: {
@@ -33,6 +36,9 @@ function MessageBubble({ message }: { message: Message }) {
 }
 
 export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProps) {
+  const { credits, useCredit } = useCreditContext();
+  const { user } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [message, setMessage] = useState('');
   const [isVoiceListening, setIsVoiceListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -44,8 +50,13 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      onSendMessage(message.trim());
-      setMessage('');
+      if (useCredit()) {
+        onSendMessage(message.trim());
+        setMessage('');
+      } else {
+        // Handle no credits left
+        alert('You have no credits left.');
+      }
     }
   };
 
@@ -72,6 +83,17 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
         <h1 className="text-xl font-semibold text-gray-800">
           {conversation?.title || 'New Conversation'}
         </h1>
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-600">
+            Credits: {credits}
+          </div>
+          {!user && (
+            <Button onClick={() => setShowAuthDialog(true)} size="sm" className="flex items-center gap-2">
+              <LogIn className="h-4 w-4" />
+              Login
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}
