@@ -164,7 +164,7 @@ function IndexContent() {
     }
 
     // Simulate AI response
-    setTimeout(() => {
+    setTimeout(async () => {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: `This is a response to: "${content}"`,
