@@ -66,7 +66,6 @@ export function SettingsDialog({
   const [exportDataLoading, setExportDataLoading] = useState(false);
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
   const [systemPromptsOpen, setSystemPromptsOpen] = useState(false);
-  const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
 
   // Apply theme changes to document
   useEffect(() => {
@@ -441,7 +440,7 @@ export function SettingsDialog({
       <SystemPromptsDialog
         open={systemPromptsOpen}
         onOpenChange={setSystemPromptsOpen}
-        onPromptSelect={setCurrentSystemPrompt}
+        onPromptSelect={onSystemPromptChange || (() => {})}
       />
     </Dialog>
   );
