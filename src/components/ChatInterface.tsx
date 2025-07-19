@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, MessageSquare, LogIn } from 'lucide-react';
+import { Send, MessageSquare, LogIn, User } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { VoiceInput } from '@/components/VoiceInput';
@@ -20,7 +20,19 @@ interface ChatInterfaceProps {
 
 function MessageBubble({ message }: { message: Message }) {
   return (
-    <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex items-start gap-3 mb-4 ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+      {/* Robot Avatar - show on left for AI messages */}
+      {!message.isUser && (
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+          <img 
+            src="/robot-favicon.svg" 
+            alt="AI Assistant" 
+            className="w-6 h-6"
+          />
+        </div>
+      )}
+      
+      {/* Message Content */}
       <div
         className={`rounded-xl px-4 py-2 text-sm max-w-[75%] ${
           message.isUser
@@ -30,6 +42,13 @@ function MessageBubble({ message }: { message: Message }) {
       >
         {message.content}
       </div>
+      
+      {/* User Avatar - show on right for user messages */}
+      {message.isUser && (
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+          <User className="w-5 h-5 text-white" />
+        </div>
+      )}
     </div>
   );
 }
