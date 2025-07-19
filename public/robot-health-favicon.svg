@@ -1,22 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <!-- Blue circular background -->
-  <circle cx="16" cy="16" r="15" fill="#2563eb"/>
+  <circle cx="16" cy="16" r="16" fill="#4285f4"/>
   
-  <!-- Robot head/body -->
-  <rect x="10" y="12" width="12" height="10" rx="2" fill="#ffffff"/>
+  <!-- Robot main body -->
+  <rect x="8" y="14" width="16" height="12" rx="3" fill="#ffffff"/>
+  
+  <!-- Robot head/top section -->
+  <rect x="11" y="10" width="10" height="8" rx="2" fill="#ffffff"/>
   
   <!-- Robot eyes -->
-  <circle cx="13" cy="16" r="1.5" fill="#2563eb"/>
-  <circle cx="19" cy="16" r="1.5" fill="#2563eb"/>
+  <circle cx="13.5" cy="14" r="1.8" fill="#4285f4"/>
+  <circle cx="18.5" cy="14" r="1.8" fill="#4285f4"/>
   
   <!-- Robot antenna -->
-  <rect x="15.5" y="8" width="1" height="4" fill="#ffffff"/>
-  <circle cx="16" cy="7" r="1.5" fill="#ffffff"/>
+  <rect x="15.5" y="6" width="1" height="4" fill="#ffffff"/>
+  <circle cx="16" cy="5" r="1.2" fill="#ffffff"/>
   
-  <!-- Health cross symbol -->
-  <rect x="15" y="18" width="2" height="1" fill="#10b981"/>
-  <rect x="15.5" y="17.5" width="1" height="2" fill="#10b981"/>
+  <!-- Robot mouth/grille -->
+  <rect x="13" y="17" width="6" height="1" fill="#4285f4" rx="0.5"/>
+  <rect x="13" y="19" width="6" height="1" fill="#4285f4" rx="0.5"/>
+  <rect x="13" y="21" width="6" height="1" fill="#4285f4" rx="0.5"/>
   
-  <!-- Simple robot mouth/line -->
-  <rect x="14" y="19" width="4" height="0.5" fill="#2563eb" rx="0.25"/>
+  <!-- Side elements -->
+  <rect x="6" y="16" width="2" height="6" rx="1" fill="#ffffff"/>
+  <rect x="24" y="16" width="2" height="6" rx="1" fill="#ffffff"/>
 </svg>
