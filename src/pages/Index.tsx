@@ -37,6 +37,34 @@ function IndexContent() {
     }
   }, [user]);
 
+  const loadMessages = async (conversationId: string) => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error loading messages:', error);
+      return;
+    }
+
+    const formattedMessages: Message[] = data.map(msg => ({
+      id: msg.id,
+      content: msg.content,
+      isUser: msg.is_user,
+      timestamp: new Date(msg.created_at)
+    }));
+
+    setConversations(prev => prev.map(conv => 
+      conv.id === conversationId 
+        ? { ...conv, messages: formattedMessages }
+        : conv
+    ));
+  };
+
   const loadConversations = async () => {
     if (!user) return;
 
@@ -62,7 +90,10 @@ function IndexContent() {
     setConversations(formattedConversations);
     
     if (formattedConversations.length > 0 && !activeConversationId) {
-      setActiveConversationId(formattedConversations[0].id);
+      const firstConvId = formattedConversations[0].id;
+      setActiveConversationId(firstConvId);
+      // Load messages for the first conversation
+      await loadMessages(firstConvId);
     }
   };
 
@@ -191,6 +222,21 @@ function IndexContent() {
     }, 1000);
   };
 
+  const handleConversationSelect = async (conversationId: string) => {
+    setActiveConversationId(conversationId);
+    // Load messages for the selected conversation
+    if (user) {
+      await loadMessages(conversationId);
+    }
+  };
+
+  // Load messages when activeConversationId changes
+  useEffect(() => {
+    if (activeConversationId && user) {
+      loadMessages(activeConversationId);
+    }
+  }, [activeConversationId, user]);
+
   const activeConversation = conversations.find(c => c.id === activeConversationId);
 
   if (loading) {
@@ -212,7 +258,7 @@ function IndexContent() {
         <ChatSidebar
           conversations={conversations}
           activeConversationId={activeConversationId}
-          onConversationSelect={setActiveConversationId}
+          onConversationSelect={handleConversationSelect}
           onNewConversation={handleNewConversation}
           onDeleteConversation={handleDeleteConversation}
           selectedModel={selectedModel}
