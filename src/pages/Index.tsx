@@ -24,8 +24,16 @@ function IndexContent() {
     if (user) {
       loadConversations();
     } else {
-      setConversations([]);
-      setActiveConversationId('');
+      // Setup a default local conversation for guests
+      const guestConversation: Conversation = {
+        id: 'guest-conversation',
+        title: 'New Conversation',
+        messages: [],
+        createdAt: new Date(),
+        user_id: 'guest'
+      };
+      setConversations([guestConversation]);
+      setActiveConversationId(guestConversation.id);
     }
   }, [user]);
 
@@ -59,7 +67,7 @@ function IndexContent() {
   };
 
   const handleNewConversation = async () => {
-    if (!user) return;
+    if (!user) return; // Guests can't create new conversations
 
     const { data, error } = await supabase
       .from('conversations')
@@ -88,7 +96,7 @@ function IndexContent() {
   };
 
   const handleDeleteConversation = async (id: string) => {
-    if (!user) return;
+    if (!user) return; // Guests can't delete conversations
 
     const { error } = await supabase
       .from('conversations')
@@ -115,7 +123,7 @@ function IndexContent() {
   };
 
   const handleSendMessage = async (content: string) => {
-    if (!user || !activeConversationId) return;
+    if (!activeConversationId) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -135,18 +143,20 @@ function IndexContent() {
         : conv
     ));
 
-    // Save to database
-    await supabase
-      .from('messages')
-      .insert({
-        conversation_id: activeConversationId,
-        content,
-        is_user: true
-      });
+    // If user is logged in, save to database
+    if (user) {
+      await supabase
+        .from('messages')
+        .insert({
+          conversation_id: activeConversationId,
+          content,
+          is_user: true
+        });
+    }
 
-    // Update conversation title if it's the first message
+    // Update conversation title if it's the first message and user is logged in
     const conversation = conversations.find(c => c.id === activeConversationId);
-    if (conversation?.messages.length === 0) {
+    if (user && conversation?.messages.length === 0) {
       await supabase
         .from('conversations')
         .update({ title: content.slice(0, 30) + '...' })
@@ -168,14 +178,16 @@ function IndexContent() {
           : conv
       ));
 
-      // Save AI response to database
-      supabase
-        .from('messages')
-        .insert({
-          conversation_id: activeConversationId,
-          content: aiResponse.content,
-          is_user: false
-        });
+      // If user is logged in, save AI response to database
+      if (user) {
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: activeConversationId,
+            content: aiResponse.content,
+            is_user: false
+          });
+      }
     }, 1000);
   };
 
@@ -220,14 +232,7 @@ function IndexContent() {
           </div>
 
           <main className="flex-1 p-4 pt-16 md:pt-4">
-            {!user ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center text-gray-500">
-                  <div className="text-2xl font-bold mb-4">Welcome to MediAI</div>
-                  <p className="text-lg mb-8">Sign in to start chatting and tracking your health</p>
-                </div>
-              </div>
-            ) : currentView === 'chat' ? (
+            {currentView === 'chat' ? (
               <ChatInterface
                 conversation={activeConversation}
                 onSendMessage={handleSendMessage}

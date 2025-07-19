@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare, LogIn } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -50,13 +49,13 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      if (useCredit()) {
-        onSendMessage(message.trim());
-        setMessage('');
-      } else {
-        // Handle no credits left
-        alert('You have no credits left.');
+      if (credits <= 0) {
+        alert("You're out of free credits. Please sign in for more.");
+        return;
       }
+      useCredit();
+      onSendMessage(message.trim());
+      setMessage('');
     }
   };
 
@@ -78,6 +77,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
 
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
+      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white rounded-t-lg">
         <h1 className="text-xl font-semibold text-gray-800">
