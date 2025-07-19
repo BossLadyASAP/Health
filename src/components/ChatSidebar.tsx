@@ -7,7 +7,12 @@ import {
   Settings, 
   Search,
   Activity,
-  Bot
+  Bot,
+  Edit3,
+  Check,
+  X,
+  Calendar,
+  Archive
 } from 'lucide-react';
 import {
   Sidebar,
@@ -35,6 +40,7 @@ interface ChatSidebarProps {
   onConversationSelect: (id: string) => void;
   onNewConversation: () => void;
   onDeleteConversation: (id: string) => void;
+  onRenameConversation?: (id: string, newTitle: string) => void;
   selectedModel: string;
   onModelChange: (model: string) => void;
   currentView: 'chat' | 'tracker';
@@ -51,6 +57,7 @@ export function ChatSidebar({
   onConversationSelect,
   onNewConversation,
   onDeleteConversation,
+  onRenameConversation,
   selectedModel,
   onModelChange,
   currentView,
@@ -65,12 +72,42 @@ export function ChatSidebar({
   const [showSettings, setShowSettings] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [editingConversation, setEditingConversation] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
   
   const { user, loading } = useAuth();
   const isCollapsed = state === "collapsed";
 
-  // Filter conversations based on search query
-  const filteredConversations = conversations.filter(conversation =>
+  // Handle conversation rename
+  const handleRenameStart = (conversation: Conversation) => {
+    setEditingConversation(conversation.id);
+    setEditTitle(conversation.title);
+  };
+
+  const handleRenameConfirm = () => {
+    if (editingConversation && editTitle.trim() && onRenameConversation) {
+      onRenameConversation(editingConversation, editTitle.trim());
+    }
+    setEditingConversation(null);
+    setEditTitle('');
+  };
+
+  const handleRenameCancel = () => {
+    setEditingConversation(null);
+    setEditTitle('');
+  };
+
+  // Sort and filter conversations
+  const sortedConversations = [...conversations].sort((a, b) => {
+    if (sortBy === 'date') {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    } else {
+      return a.title.localeCompare(b.title);
+    }
+  });
+
+  const filteredConversations = sortedConversations.filter(conversation =>
     conversation.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -110,14 +147,36 @@ export function ChatSidebar({
           </div>
           
           {!isCollapsed && currentView === 'chat' && user && (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search chats..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-50 border-gray-200"
-              />
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search chats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-gray-50 border-gray-200"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant={sortBy === 'date' ? 'default' : 'ghost'}
+                  onClick={() => setSortBy('date')}
+                  className="flex items-center gap-1 text-xs h-7"
+                >
+                  <Calendar className="h-3 w-3" />
+                  Date
+                </Button>
+                <Button
+                  size="sm"
+                  variant={sortBy === 'name' ? 'default' : 'ghost'}
+                  onClick={() => setSortBy('name')}
+                  className="flex items-center gap-1 text-xs h-7"
+                >
+                  <Archive className="h-3 w-3" />
+                  Name
+                </Button>
+              </div>
             </div>
           )}
         </SidebarHeader>
@@ -142,24 +201,68 @@ export function ChatSidebar({
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <MessageSquare className="h-4 w-4 flex-shrink-0" />
                           {!isCollapsed && (
-                            <span className="truncate text-sm">
-                              {conversation.title}
-                            </span>
+                            editingConversation === conversation.id ? (
+                              <div className="flex items-center gap-1 flex-1" onClick={(e) => e.stopPropagation()}>
+                                <Input
+                                  value={editTitle}
+                                  onChange={(e) => setEditTitle(e.target.value)}
+                                  className="h-6 text-xs flex-1"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleRenameConfirm();
+                                    if (e.key === 'Escape') handleRenameCancel();
+                                  }}
+                                  autoFocus
+                                />
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={handleRenameConfirm}
+                                  className="h-6 w-6 p-0 hover:bg-green-100 hover:text-green-600"
+                                >
+                                  <Check className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={handleRenameCancel}
+                                  className="h-6 w-6 p-0 hover:bg-gray-100"
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <span className="truncate text-sm">
+                                {conversation.title}
+                              </span>
+                            )
                           )}
                         </div>
                         
-                        {!isCollapsed && hoveredConversation === conversation.id && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDeleteConversation(conversation.id);
-                            }}
-                            className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
+                        {!isCollapsed && hoveredConversation === conversation.id && editingConversation !== conversation.id && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRenameStart(conversation);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 hover:bg-blue-100 hover:text-blue-600"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteConversation(conversation.id);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </SidebarMenuButton>

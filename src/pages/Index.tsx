@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { ChatSidebar } from '@/components/ChatSidebar';
 import { ChatInterface } from '@/components/ChatInterface';
 import { HealthTracker } from '@/components/HealthTracker';
+import { SettingsDialog } from '@/components/SettingsDialog';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { CreditProvider } from '@/context/CreditContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,6 +16,8 @@ function IndexContent() {
   const [currentView, setCurrentView] = useState<'chat' | 'tracker'>('chat');
   const [theme, setTheme] = useState('System');
   const [language, setLanguage] = useState('Auto-detect');
+  const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { user, loading } = useAuth();
 
@@ -126,6 +128,25 @@ function IndexContent() {
     setActiveConversationId(newConversation.id);
   };
 
+  const handleRenameConversation = async (id: string, newTitle: string) => {
+    if (!user) return; // Guests can't rename conversations
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ title: newTitle })
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error renaming conversation:', error);
+      return;
+    }
+
+    setConversations(prev => prev.map(conv => 
+      conv.id === id ? { ...conv, title: newTitle } : conv
+    ));
+  };
+
   const handleDeleteConversation = async (id: string) => {
     if (!user) return; // Guests can't delete conversations
 
@@ -194,11 +215,33 @@ function IndexContent() {
         .eq('id', activeConversationId);
     }
 
-    // Simulate AI response
+    // Simulate AI response with system prompt context
     setTimeout(async () => {
+      let responseContent = `This is a response to: "${content}"`;
+      
+      // If there's a system prompt, modify the response accordingly
+      if (currentSystemPrompt) {
+        switch (currentSystemPrompt.category) {
+          case 'mental_health':
+            responseContent = `As your mental health support assistant: I understand you're sharing "${content}". Remember that it's important to take care of your mental wellbeing. Would you like to explore some coping strategies or mindfulness techniques?`;
+            break;
+          case 'nutrition':
+            responseContent = `As your nutrition coach: Regarding "${content}", let me help you with evidence-based nutritional guidance. What specific dietary goals or concerns would you like to address?`;
+            break;
+          case 'fitness':
+            responseContent = `As your fitness trainer: About "${content}", I'm here to help you achieve your fitness goals safely and effectively. What's your current activity level and what would you like to work on?`;
+            break;
+          case 'physical_health':
+            responseContent = `As your health assistant: Concerning "${content}", I can provide general health information and wellness guidance. Remember to consult healthcare professionals for medical concerns. How can I help you today?`;
+            break;
+          default:
+            responseContent = `As your health assistant: Thank you for sharing "${content}". I'm here to provide helpful health and wellness information. How can I assist you further?`;
+        }
+      }
+      
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: `This is a response to: "${content}"`,
+        content: responseContent,
         isUser: false,
         timestamp: new Date(),
       };
@@ -261,6 +304,7 @@ function IndexContent() {
           onConversationSelect={handleConversationSelect}
           onNewConversation={handleNewConversation}
           onDeleteConversation={handleDeleteConversation}
+          onRenameConversation={handleRenameConversation}
           selectedModel={selectedModel}
           onModelChange={setSelectedModel}
           currentView={currentView}
@@ -269,6 +313,20 @@ function IndexContent() {
           onThemeChange={setTheme}
           language={language}
           onLanguageChange={setLanguage}
+          onSettingsOpen={setSettingsOpen}
+        />
+        
+        <SettingsDialog
+          open={settingsOpen}
+          onOpenChange={setSettingsOpen}
+          selectedModel={selectedModel}
+          onModelChange={setSelectedModel}
+          theme={theme}
+          onThemeChange={setTheme}
+          language={language}
+          onLanguageChange={setLanguage}
+          currentSystemPrompt={currentSystemPrompt}
+          onSystemPromptChange={setCurrentSystemPrompt}
         />
         
         <SidebarInset className="flex-1">

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { X, Play, Trash2, Shield, Download } from 'lucide-react';
+import { X, Play, Trash2, Shield, Download, Bot } from 'lucide-react';
+import { SystemPromptsDialog } from './SystemPromptsDialog';
 import {
   Dialog,
   DialogContent,
@@ -29,10 +30,13 @@ interface SettingsDialogProps {
   onThemeChange: (theme: string) => void;
   language: string;
   onLanguageChange: (language: string) => void;
+  currentSystemPrompt?: any;
+  onSystemPromptChange?: (prompt: any) => void;
 }
 
 const settingsSections = [
   { id: 'general', label: 'General', icon: '⚙️' },
+  { id: 'system-prompts', label: 'AI Prompts', icon: '🤖' },
   { id: 'notifications', label: 'Notifications', icon: '🔔' },
   { id: 'data-controls', label: 'Data controls', icon: '🛡️' },
   { id: 'security', label: 'Security', icon: '🔒' },
@@ -47,7 +51,9 @@ export function SettingsDialog({
   theme,
   onThemeChange,
   language,
-  onLanguageChange 
+  onLanguageChange,
+  currentSystemPrompt,
+  onSystemPromptChange 
 }: SettingsDialogProps) {
   const [activeSection, setActiveSection] = useState('general');
   const [spokenLanguage, setSpokenLanguage] = useState('Auto-detect');
@@ -59,6 +65,8 @@ export function SettingsDialog({
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [exportDataLoading, setExportDataLoading] = useState(false);
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
+  const [systemPromptsOpen, setSystemPromptsOpen] = useState(false);
+  const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
 
   // Apply theme changes to document
   useEffect(() => {
@@ -99,6 +107,47 @@ export function SettingsDialog({
       setDeleteAccountLoading(false);
     }
   };
+
+  const renderSystemPromptsSettings = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium">Current AI Behavior</h3>
+          <p className="text-xs text-gray-500 mt-1">
+            {currentSystemPrompt ? currentSystemPrompt.name : 'Default Health Assistant'}
+          </p>
+        </div>
+        <Button 
+          onClick={() => setSystemPromptsOpen(true)}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <Bot className="h-4 w-4" />
+          Manage Prompts
+        </Button>
+      </div>
+      
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h4 className="text-sm font-medium mb-2">About System Prompts</h4>
+        <p className="text-xs text-gray-600">
+          System prompts define how your AI assistant behaves and responds. Choose from health-focused prompts like Mental Health Support, Nutrition Coach, or Fitness Trainer to get specialized assistance.
+        </p>
+      </div>
+      
+      {currentSystemPrompt && (
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Bot className="h-4 w-4 text-blue-600" />
+            <h4 className="text-sm font-medium">{currentSystemPrompt.name}</h4>
+          </div>
+          <p className="text-xs text-gray-600 mb-2">{currentSystemPrompt.description}</p>
+          <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded line-clamp-3">
+            {currentSystemPrompt.prompt}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 
   const renderGeneralSettings = () => (
     <div className="space-y-6">
@@ -324,6 +373,8 @@ export function SettingsDialog({
     switch (activeSection) {
       case 'general':
         return renderGeneralSettings();
+      case 'system-prompts':
+        return renderSystemPromptsSettings();
       case 'notifications':
         return renderNotificationSettings();
       case 'data-controls':
@@ -386,6 +437,12 @@ export function SettingsDialog({
           </div>
         </div>
       </DialogContent>
+      
+      <SystemPromptsDialog
+        open={systemPromptsOpen}
+        onOpenChange={setSystemPromptsOpen}
+        onPromptSelect={setCurrentSystemPrompt}
+      />
     </Dialog>
   );
 }
