@@ -26,9 +26,17 @@ function IndexContent() {
   // Initialize language from localStorage and listen for changes
   useEffect(() => {
     const handleLanguageChange = (event: CustomEvent) => {
-      setPlatformLanguage(event.detail.language);
-      // Force re-render of components that depend on language
-      window.dispatchEvent(new Event('resize'));
+      const newLanguage = event.detail.language;
+      setPlatformLanguage(newLanguage);
+      
+      // Apply language changes immediately to document
+      const langCode = newLanguage.toLowerCase().split(' ')[0];
+      document.documentElement.lang = langCode;
+      
+      // Force update of all text content by adding a data attribute
+      document.body.setAttribute('data-language', langCode);
+      
+      console.log('Language changed to:', newLanguage, 'Code:', langCode);
     };
 
     document.addEventListener('languageChanged', handleLanguageChange as EventListener);
@@ -37,6 +45,13 @@ function IndexContent() {
       document.removeEventListener('languageChanged', handleLanguageChange as EventListener);
     };
   }, []);
+
+  // Apply initial language on mount
+  useEffect(() => {
+    const langCode = platformLanguage.toLowerCase().split(' ')[0];
+    document.documentElement.lang = langCode;
+    document.body.setAttribute('data-language', langCode);
+  }, [platformLanguage]);
 
   // Load conversations when user is authenticated
   useEffect(() => {
@@ -51,8 +66,12 @@ function IndexContent() {
         createdAt: new Date(),
         user_id: 'guest'
       };
-      setConversations([guestConversation]);
-      setActiveConversationId(guestConversation.id);
+      
+      // Use setTimeout to ensure state updates happen in correct order
+      setTimeout(() => {
+        setConversations([guestConversation]);
+        setActiveConversationId(guestConversation.id);
+      }, 0);
     }
   }, [user]);
 
@@ -77,11 +96,14 @@ function IndexContent() {
       timestamp: new Date(msg.created_at)
     }));
 
-    setConversations(prev => prev.map(conv => 
-      conv.id === conversationId 
-        ? { ...conv, messages: formattedMessages }
-        : conv
-    ));
+    // Only update if we actually have messages or if the conversation is empty
+    setConversations(prev => prev.map(conv => {
+      if (conv.id === conversationId) {
+        // Only replace messages if we loaded from database or conversation is empty
+        return { ...conv, messages: formattedMessages };
+      }
+      return conv;
+    }));
   };
 
   const loadConversations = async () => {
@@ -290,10 +312,15 @@ function IndexContent() {
     }
   };
 
-  // Load messages when activeConversationId changes
+  // Load messages when activeConversationId changes (only for authenticated users)
   useEffect(() => {
     if (activeConversationId && user) {
-      loadMessages(activeConversationId);
+      // Add a small delay to prevent race conditions
+      const timeoutId = setTimeout(() => {
+        loadMessages(activeConversationId);
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [activeConversationId, user]);
 

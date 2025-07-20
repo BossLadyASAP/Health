@@ -68,14 +68,22 @@ export function SettingsDialog({
     const langCode = platformLanguage.toLowerCase().split(' ')[0];
     document.documentElement.lang = langCode;
     
-    // Trigger immediate UI updates
-    document.dispatchEvent(new CustomEvent('languageChanged', { 
-      detail: { language: platformLanguage, langCode } 
-    }));
-    
-    // Store language preference
+    // Store language preference immediately
     localStorage.setItem('platformLanguage', platformLanguage);
-  }, [platformLanguage]);
+    
+    // Trigger immediate UI updates with a slight delay to ensure state is updated
+    setTimeout(() => {
+      document.dispatchEvent(new CustomEvent('languageChanged', { 
+        detail: { language: platformLanguage, langCode },
+        bubbles: true
+      }));
+    }, 0);
+    
+    // Also trigger immediate parent component update
+    if (onPlatformLanguageChange) {
+      onPlatformLanguageChange(platformLanguage);
+    }
+  }, [platformLanguage, onPlatformLanguageChange]);
 
   const playVoiceSample = () => {
     console.log(`Playing ${voice} voice sample`);
