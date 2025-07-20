@@ -45,10 +45,8 @@ interface ChatSidebarProps {
   onModelChange: (model: string) => void;
   currentView: 'chat' | 'tracker';
   onViewChange: (view: 'chat' | 'tracker') => void;
-  theme: string;
-  onThemeChange: (theme: string) => void;
-  language: string;
-  onLanguageChange: (language: string) => void;
+  platformLanguage: string;
+  onPlatformLanguageChange: (language: string) => void;
 }
 
 export function ChatSidebar({
@@ -62,10 +60,8 @@ export function ChatSidebar({
   onModelChange,
   currentView,
   onViewChange,
-  theme,
-  onThemeChange,
-  language,
-  onLanguageChange
+  platformLanguage,
+  onPlatformLanguageChange
 }: ChatSidebarProps) {
   const { state } = useSidebar();
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
@@ -305,10 +301,8 @@ export function ChatSidebar({
         onOpenChange={setShowSettings}
         selectedModel={selectedModel}
         onModelChange={onModelChange}
-        theme={theme}
-        onThemeChange={onThemeChange}
-        language={language}
-        onLanguageChange={onLanguageChange}
+        platformLanguage={platformLanguage}
+        onPlatformLanguageChange={onPlatformLanguageChange}
       />
 
       <AuthDialog 

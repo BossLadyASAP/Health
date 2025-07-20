@@ -14,8 +14,7 @@ function IndexContent() {
   const [activeConversationId, setActiveConversationId] = useState('');
   const [selectedModel, setSelectedModel] = useState('GPT-4');
   const [currentView, setCurrentView] = useState<'chat' | 'tracker'>('chat');
-  const [theme, setTheme] = useState('System');
-  const [language, setLanguage] = useState('Auto-detect');
+  const [platformLanguage, setPlatformLanguage] = useState('Auto-detect');
   const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -309,11 +308,8 @@ function IndexContent() {
           onModelChange={setSelectedModel}
           currentView={currentView}
           onViewChange={setCurrentView}
-          theme={theme}
-          onThemeChange={setTheme}
-          language={language}
-          onLanguageChange={setLanguage}
-          onSettingsOpen={setSettingsOpen}
+          platformLanguage={platformLanguage}
+          onPlatformLanguageChange={setPlatformLanguage}
         />
         
         <SettingsDialog
@@ -321,10 +317,8 @@ function IndexContent() {
           onOpenChange={setSettingsOpen}
           selectedModel={selectedModel}
           onModelChange={setSelectedModel}
-          theme={theme}
-          onThemeChange={setTheme}
-          language={language}
-          onLanguageChange={setLanguage}
+          platformLanguage={platformLanguage}
+          onPlatformLanguageChange={setPlatformLanguage}
           currentSystemPrompt={currentSystemPrompt}
           onSystemPromptChange={setCurrentSystemPrompt}
         />

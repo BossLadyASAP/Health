@@ -26,10 +26,8 @@ interface SettingsDialogProps {
   onOpenChange: (open: boolean) => void;
   selectedModel: string;
   onModelChange: (model: string) => void;
-  theme: string;
-  onThemeChange: (theme: string) => void;
-  language: string;
-  onLanguageChange: (language: string) => void;
+  platformLanguage: string;
+  onPlatformLanguageChange: (language: string) => void;
   currentSystemPrompt?: any;
   onSystemPromptChange?: (prompt: any) => void;
 }
@@ -48,10 +46,8 @@ export function SettingsDialog({
   onOpenChange, 
   selectedModel, 
   onModelChange,
-  theme,
-  onThemeChange,
-  language,
-  onLanguageChange,
+  platformLanguage,
+  onPlatformLanguageChange,
   currentSystemPrompt,
   onSystemPromptChange 
 }: SettingsDialogProps) {
@@ -67,15 +63,10 @@ export function SettingsDialog({
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
   const [systemPromptsOpen, setSystemPromptsOpen] = useState(false);
 
-  // Apply theme changes to document
+  // Apply language changes to document
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'Dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [theme]);
+    document.documentElement.lang = platformLanguage.toLowerCase().split(' ')[0];
+  }, [platformLanguage]);
 
   const playVoiceSample = () => {
     console.log(`Playing ${voice} voice sample`);
@@ -152,34 +143,40 @@ export function SettingsDialog({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium">Theme</h3>
+          <h3 className="text-sm font-medium">Platform Language</h3>
+          <p className="text-xs text-gray-500 mt-1">
+            Changes site, AI, and chat language
+          </p>
         </div>
-        <Select value={theme} onValueChange={onThemeChange}>
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="System">System</SelectItem>
-            <SelectItem value="Light">Light</SelectItem>
-            <SelectItem value="Dark">Dark</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-medium">Language</h3>
-        </div>
-        <Select value={language} onValueChange={onLanguageChange}>
-          <SelectTrigger className="w-32">
+        <Select value={platformLanguage} onValueChange={onPlatformLanguageChange}>
+          <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Auto-detect">Auto-detect</SelectItem>
             <SelectItem value="English">English</SelectItem>
-            <SelectItem value="Spanish">Spanish</SelectItem>
-            <SelectItem value="French">French</SelectItem>
-            <SelectItem value="German">German</SelectItem>
+            <SelectItem value="French">Français</SelectItem>
+            <SelectItem value="Spanish">Español</SelectItem>
+            <SelectItem value="German">Deutsch</SelectItem>
+            <SelectItem value="Portuguese">Português</SelectItem>
+            <SelectItem value="Italian">Italiano</SelectItem>
+            <SelectItem value="Dutch">Nederlands</SelectItem>
+            <SelectItem value="Russian">Русский</SelectItem>
+            <SelectItem value="Chinese">中文</SelectItem>
+            <SelectItem value="Japanese">日本語</SelectItem>
+            <SelectItem value="Korean">한국어</SelectItem>
+            <SelectItem value="Arabic">العربية</SelectItem>
+            <SelectItem value="Hindi">हिन्दी</SelectItem>
+            <SelectItem value="Swahili">Kiswahili</SelectItem>
+            <SelectItem value="Hausa">Hausa</SelectItem>
+            <SelectItem value="Yoruba">Yorùbá</SelectItem>
+            <SelectItem value="Igbo">Igbo</SelectItem>
+            <SelectItem value="Fulfulde">Fulfulde</SelectItem>
+            <SelectItem value="Ewondo">Ewondo</SelectItem>
+            <SelectItem value="Duala">Duálá</SelectItem>
+            <SelectItem value="Bamileke">Bamiléké</SelectItem>
+            <SelectItem value="Bassa">Bassa</SelectItem>
+            <SelectItem value="Bamoun">Bamoun</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -421,14 +418,6 @@ export function SettingsDialog({
           <div className="flex-1 flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold capitalize">{activeSection.replace('-', ' ')}</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-                className="h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
             <div className="flex-1 p-6 overflow-y-auto">
               {renderSectionContent()}
