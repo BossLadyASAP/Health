@@ -1,77 +1,65 @@
->>>>>>> a49175b... Initial commit: Medical AI Health Tracker
-# Health
-=======
-# Welcome to your Lovable project
+🩺 MediAI – Medical AI Health Tracker
+Healthy is an AI-powered medical assistant that helps users understand their symptoms, track their health, and get daily insights. It’s designed for the general public, especially those with limited access to healthcare.
 
-## Project info
+🔍 What It Does
+Symptom Checker: Describe your symptoms in plain language and get instant feedback on possible common conditions (flu, malaria, cold, etc.).
 
-**URL**: https://lovable.dev/projects/e938b7e7-dde4-4e22-a07b-aebf421c9f3a
+Health Monitoring: Track symptoms and vitals over time to see patterns or improvements.
 
-## How can I edit this code?
+Medical Advice: Get clear suggestions like "see a doctor," "drink water," or "rest."
 
-There are several ways of editing your application.
+Chat-Based AI: Talk to the system like you're chatting with a real assistant.
 
-**Use Lovable**
+Daily Credits: Use up to 5 free health requests each day. Upgrade for more access.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e938b7e7-dde4-4e22-a07b-aebf421c9f3a) and start prompting.
+Profile Settings: Modify your info, manage usage, and change subscription plans.
 
-Changes made via Lovable will be committed automatically to this repo.
+👥 Who It's For
+Everyday users who want to better understand their health
 
-**Use your preferred IDE**
+People in remote or underserved areas
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Anyone needing quick, reliable health insights without going to the clinic immediately
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+💡 How to Use It
+Sign up and set up your profile.
 
-Follow these steps:
+Enter symptoms like "I have a sore throat and fever."
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Get suggestions and a quick idea of what might be happening.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Track your history and improvements over time.
 
-# Step 3: Install the necessary dependencies.
-npm i
+Upgrade if you need more credits or advanced features.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+⚙️ Key Features
+AI-powered diagnosis for basic health issues
 
-**Edit a file directly in GitHub**
+Symptom tracking dashboard
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Real-time chatbot interface
 
-**Use GitHub Codespaces**
+Profile customization
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Plan upgrades (daily limits, unlimited options)
 
-## What technologies are used for this project?
+Safe, secure, and private user data
 
-This project is built with:
+🌱 What’s Coming Soon
+Mental health support
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Health reminders (medicine, water, rest)
 
-## How can I deploy this project?
+PDF health reports
 
-Simply open [Lovable](https://lovable.dev/projects/e938b7e7-dde4-4e22-a07b-aebf421c9f3a) and click on Share -> Publish.
+Mobile app version
 
-## Can I connect a custom domain to my Lovable project?
+Language options
 
-Yes, you can!
+⚠️ Note
+This app does not replace real doctors. It gives useful preliminary information to help you make better health choices. Always consult a healthcare provider when necessary.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
->>>>>>> a49175b (Initial commit: Medical AI Health Tracker)
+📬 Contact
+Questions or feedback?
+Email: chanelledasse@gail.com
+Website:[ https://mediaiti.netlify.app/](https://mediaiti.netlify.app/) (coming soon)
