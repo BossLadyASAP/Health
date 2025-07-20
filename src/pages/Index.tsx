@@ -20,6 +20,7 @@ function IndexContent() {
   });
   const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [languageUpdateKey, setLanguageUpdateKey] = useState(0);
 
   const { user, loading } = useAuth();
 
@@ -35,6 +36,14 @@ function IndexContent() {
       
       // Force update of all text content by adding a data attribute
       document.body.setAttribute('data-language', langCode);
+      
+      // Force re-render of all components by updating key
+      setLanguageUpdateKey(prev => prev + 1);
+      
+      // Dispatch a custom event to notify all components
+      window.dispatchEvent(new CustomEvent('forceLanguageUpdate', { 
+        detail: { language: newLanguage, langCode } 
+      }));
       
       console.log('Language changed to:', newLanguage, 'Code:', langCode);
     };
@@ -67,11 +76,9 @@ function IndexContent() {
         user_id: 'guest'
       };
       
-      // Use setTimeout to ensure state updates happen in correct order
-      setTimeout(() => {
-        setConversations([guestConversation]);
-        setActiveConversationId(guestConversation.id);
-      }, 0);
+      // Ensure state updates happen synchronously for guests
+      setConversations([guestConversation]);
+      setActiveConversationId(guestConversation.id);
     }
   }, [user]);
 
@@ -99,8 +106,12 @@ function IndexContent() {
     // Only update if we actually have messages or if the conversation is empty
     setConversations(prev => prev.map(conv => {
       if (conv.id === conversationId) {
-        // Only replace messages if we loaded from database or conversation is empty
-        return { ...conv, messages: formattedMessages };
+        // Prevent overwriting local messages that haven't been saved yet
+        // Only replace if we have database messages or conversation is truly empty
+        const hasLocalMessages = conv.messages.some(msg => msg.id.toString().startsWith(Date.now().toString().slice(0, -3)));
+        if (formattedMessages.length > 0 || (!hasLocalMessages && conv.messages.length === 0)) {
+          return { ...conv, messages: formattedMessages };
+        }
       }
       return conv;
     }));
@@ -317,12 +328,16 @@ function IndexContent() {
     if (activeConversationId && user) {
       // Add a small delay to prevent race conditions
       const timeoutId = setTimeout(() => {
-        loadMessages(activeConversationId);
+        // Only load if conversation doesn't already have messages
+        const conversation = conversations.find(c => c.id === activeConversationId);
+        if (!conversation || conversation.messages.length === 0) {
+          loadMessages(activeConversationId);
+        }
       }, 100);
       
       return () => clearTimeout(timeoutId);
     }
-  }, [activeConversationId, user]);
+  }, [activeConversationId, user, conversations]);
 
   const activeConversation = conversations.find(c => c.id === activeConversationId);
 

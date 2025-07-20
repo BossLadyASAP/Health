@@ -59,11 +59,25 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [message, setMessage] = useState('');
   const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const [languageKey, setLanguageKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conversation?.messages]);
+
+  // Listen for language updates to force re-render
+  useEffect(() => {
+    const handleLanguageUpdate = () => {
+      setLanguageKey(prev => prev + 1);
+    };
+
+    window.addEventListener('forceLanguageUpdate', handleLanguageUpdate);
+    
+    return () => {
+      window.removeEventListener('forceLanguageUpdate', handleLanguageUpdate);
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
