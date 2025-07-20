@@ -63,9 +63,18 @@ export function SettingsDialog({
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
   const [systemPromptsOpen, setSystemPromptsOpen] = useState(false);
 
-  // Apply language changes to document
+  // Apply language changes to document immediately
   useEffect(() => {
-    document.documentElement.lang = platformLanguage.toLowerCase().split(' ')[0];
+    const langCode = platformLanguage.toLowerCase().split(' ')[0];
+    document.documentElement.lang = langCode;
+    
+    // Trigger immediate UI updates
+    document.dispatchEvent(new CustomEvent('languageChanged', { 
+      detail: { language: platformLanguage, langCode } 
+    }));
+    
+    // Store language preference
+    localStorage.setItem('platformLanguage', platformLanguage);
   }, [platformLanguage]);
 
   const playVoiceSample = () => {
@@ -167,10 +176,6 @@ export function SettingsDialog({
             <SelectItem value="Korean">한국어</SelectItem>
             <SelectItem value="Arabic">العربية</SelectItem>
             <SelectItem value="Hindi">हिन्दी</SelectItem>
-            <SelectItem value="Swahili">Kiswahili</SelectItem>
-            <SelectItem value="Hausa">Hausa</SelectItem>
-            <SelectItem value="Yoruba">Yorùbá</SelectItem>
-            <SelectItem value="Igbo">Igbo</SelectItem>
             <SelectItem value="Fulfulde">Fulfulde</SelectItem>
             <SelectItem value="Ewondo">Ewondo</SelectItem>
             <SelectItem value="Duala">Duálá</SelectItem>

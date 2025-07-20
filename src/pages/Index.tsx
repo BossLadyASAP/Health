@@ -14,11 +14,29 @@ function IndexContent() {
   const [activeConversationId, setActiveConversationId] = useState('');
   const [selectedModel, setSelectedModel] = useState('GPT-4');
   const [currentView, setCurrentView] = useState<'chat' | 'tracker'>('chat');
-  const [platformLanguage, setPlatformLanguage] = useState('Auto-detect');
+  const [platformLanguage, setPlatformLanguage] = useState(() => {
+    // Initialize from localStorage or default to 'Auto-detect'
+    return localStorage.getItem('platformLanguage') || 'Auto-detect';
+  });
   const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { user, loading } = useAuth();
+
+  // Initialize language from localStorage and listen for changes
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      setPlatformLanguage(event.detail.language);
+      // Force re-render of components that depend on language
+      window.dispatchEvent(new Event('resize'));
+    };
+
+    document.addEventListener('languageChanged', handleLanguageChange as EventListener);
+    
+    return () => {
+      document.removeEventListener('languageChanged', handleLanguageChange as EventListener);
+    };
+  }, []);
 
   // Load conversations when user is authenticated
   useEffect(() => {
