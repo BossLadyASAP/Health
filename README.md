@@ -61,5 +61,5 @@ This app does not replace real doctors. It gives useful preliminary information 
 
 📬 Contact
 Questions or feedback?
-Email: chanelledasse@gail.com
+Email: chanelledasse@gmail.com
 Website:[ https://mediaiti.netlify.app/](https://mediaiti.netlify.app/) (coming soon)
