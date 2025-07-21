@@ -1,4 +1,4 @@
-export const translations = {
+export const comprehensiveTranslations = {
   'Auto-detect': {
     // Settings
     'Platform Language': 'Platform Language',
@@ -508,5 +508,5 @@ export const translations = {
   },
 };
 
-export type TranslationKey = keyof typeof translations.English;
-export type LanguageCode = keyof typeof translations;
+export type ComprehensiveTranslationKey = keyof typeof comprehensiveTranslations.English;
+export type ComprehensiveLanguageCode = keyof typeof comprehensiveTranslations;
