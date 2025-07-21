@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -14,7 +13,10 @@ import {
   Check,
   X,
   Calendar,
-  Archive
+  Archive,
+  FileText,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import {
   Sidebar,
@@ -71,6 +73,7 @@ export function ChatSidebar({
   const [editingConversation, setEditingConversation] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
+  const [showPatientInfo, setShowPatientInfo] = useState(false);
   
   const { user, loading } = useAuth();
   const isCollapsed = state === "collapsed";
@@ -144,6 +147,34 @@ export function ChatSidebar({
           
           {!isCollapsed && currentView === 'chat' && user && (
             <div className="space-y-2">
+              {/* Patient Information Button */}
+              <Button
+                onClick={() => setShowPatientInfo(!showPatientInfo)}
+                variant="outline"
+                className="w-full flex items-center justify-between text-sm h-9"
+              >
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  {t('Patient Information')}
+                </div>
+                {showPatientInfo ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+              
+              {/* Patient Information Panel */}
+              {showPatientInfo && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-2">
+                  <h4 className="font-medium text-sm text-blue-900">{t('Patient Diagnosis')}</h4>
+                  <div className="text-xs text-blue-800 space-y-1">
+                    <p><strong>{t('Primary Condition')}:</strong> {t('Hypertension, Type 2 Diabetes')}</p>
+                    <p><strong>{t('Secondary Conditions')}:</strong> {t('Mild Anxiety, Sleep Apnea')}</p>
+                    <p><strong>{t('Current Medications')}:</strong> {t('Metformin 500mg, Lisinopril 10mg')}</p>
+                    <p><strong>{t('Allergies')}:</strong> {t('Penicillin, Shellfish')}</p>
+                    <p><strong>{t('Last Visit')}:</strong> {t('December 15, 2024')}</p>
+                    <p><strong>{t('Next Appointment')}:</strong> {t('January 20, 2025')}</p>
+                  </div>
+                </div>
+              )}
+              
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input

@@ -25,7 +25,7 @@ export function VoiceInput({ onTranscription, isListening, className }: VoiceInp
     
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = 'en-US';
+    recognition.lang = 'en-US','fr-FR';
 
     recognition.onstart = () => {
       setIsRecording(true);

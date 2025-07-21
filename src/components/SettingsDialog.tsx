@@ -57,6 +57,7 @@ export const SettingsDialog = ({
   const [activeSection, setActiveSection] = useState('general');
   const [spokenLanguage, setSpokenLanguage] = useState('Auto-detect');
   const [voice, setVoice] = useState('Ember');
+  const [voiceLanguage, setVoiceLanguage] = useState('Auto-detect');
   const [followUpSuggestions, setFollowUpSuggestions] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
@@ -187,6 +188,42 @@ export const SettingsDialog = ({
         <div className="text-sm text-gray-600">
           {spokenLanguage}
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium">{t('Voice Language')}</h3>
+          <p className="text-xs text-gray-500 mt-1">
+            {t('Language for chat response audio')}
+          </p>
+        </div>
+        <Select value={voiceLanguage} onValueChange={setVoiceLanguage}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Auto-detect">Auto-detect</SelectItem>
+            <SelectItem value="English">English</SelectItem>
+            <SelectItem value="French">Français</SelectItem>
+            <SelectItem value="Spanish">Español</SelectItem>
+            <SelectItem value="German">Deutsch</SelectItem>
+            <SelectItem value="Portuguese">Português</SelectItem>
+            <SelectItem value="Italian">Italiano</SelectItem>
+            <SelectItem value="Dutch">Nederlands</SelectItem>
+            <SelectItem value="Russian">Русский</SelectItem>
+            <SelectItem value="Chinese">中文</SelectItem>
+            <SelectItem value="Japanese">日本語</SelectItem>
+            <SelectItem value="Korean">한국어</SelectItem>
+            <SelectItem value="Arabic">العربية</SelectItem>
+            <SelectItem value="Hindi">हिन्दी</SelectItem>
+            <SelectItem value="Fulfulde">Fulfulde</SelectItem>
+            <SelectItem value="Ewondo">Ewondo</SelectItem>
+            <SelectItem value="Duala">Duálá</SelectItem>
+            <SelectItem value="Bamileke">Bamiléké</SelectItem>
+            <SelectItem value="Bassa">Bassa</SelectItem>
+            <SelectItem value="Bamoun">Bamoun</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex items-center justify-between">
