@@ -35,7 +35,7 @@ import { Input } from '@/components/ui/input';
 import { Conversation } from '@/types';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { AuthDialog } from '@/components/auth/AuthDialog';
-import { UserProfileDropdown } from '@/components/auth/UserProfileDropdown';
+
 import { useAuth } from '@/hooks/useAuth';
 
 interface ChatSidebarProps {
@@ -128,8 +128,11 @@ export function ChatSidebar({
                       <Plus className="h-4 w-4" />
                       {t('New Chat')}
                     </Button>
-                    
-                    <UserProfileDropdown onSettingsClick={() => setShowSettings(true)} />
+                    <div className="flex items-center justify-center">
+                      <span className="text-sm font-medium text-gray-700">
+                        {user?.full_name || user?.first_name || user.email}
+                      </span>
+                    </div>
                   </>
                 ) : (
                   <Button

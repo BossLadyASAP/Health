@@ -9,6 +9,8 @@ import { Message } from '@/types';
 
 import { useAuth } from '@/hooks/useAuth';
 import { AuthDialog } from './auth/AuthDialog';
+import { UserProfileDropdown } from './auth/UserProfileDropdown';
+import { SettingsDialog } from './SettingsDialog';
 
 interface ChatInterfaceProps {
   conversation: {
@@ -59,6 +61,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
 
   const { user } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [message, setMessage] = useState('');
   const [isVoiceListening, setIsVoiceListening] = useState(false);
   const { platformLanguage, languageCode } = useLanguage();
@@ -105,8 +108,20 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
         <h1 className="text-xl font-semibold text-gray-800">
           {conversation?.title || 'New Conversation'}
         </h1>
-
+        
+        {/* User Menu in Top Right */}
+        {user && (
+          <UserProfileDropdown onSettingsClick={() => setShowSettings(true)} />
+        )}
       </div>
+      
+      {/* Settings Dialog */}
+      <SettingsDialog 
+        open={showSettings} 
+        onOpenChange={setShowSettings}
+        selectedModel="gpt-4"
+        onModelChange={() => {}}
+      />
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
