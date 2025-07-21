@@ -3,6 +3,7 @@ import { Send, MessageSquare, LogIn, User } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { VoiceInput } from '@/components/VoiceInput';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Message } from '@/types';
 import { useCreditContext } from '@/context/CreditContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -59,7 +60,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [message, setMessage] = useState('');
   const [isVoiceListening, setIsVoiceListening] = useState(false);
-  const [languageKey, setLanguageKey] = useState(0);
+  const { platformLanguage, languageCode } = useLanguage();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,17 +68,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   }, [conversation?.messages]);
 
   // Listen for language updates to force re-render
-  useEffect(() => {
-    const handleLanguageUpdate = () => {
-      setLanguageKey(prev => prev + 1);
-    };
-
-    window.addEventListener('forceLanguageUpdate', handleLanguageUpdate);
-    
-    return () => {
-      window.removeEventListener('forceLanguageUpdate', handleLanguageUpdate);
-    };
-  }, []);
+  // Language updates are now handled automatically by LanguageContext
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

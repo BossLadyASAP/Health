@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   MessageSquare, 
   Plus, 
@@ -45,8 +46,6 @@ interface ChatSidebarProps {
   onModelChange: (model: string) => void;
   currentView: 'chat' | 'tracker';
   onViewChange: (view: 'chat' | 'tracker') => void;
-  platformLanguage: string;
-  onPlatformLanguageChange: (language: string) => void;
 }
 
 export function ChatSidebar({
@@ -59,10 +58,9 @@ export function ChatSidebar({
   selectedModel,
   onModelChange,
   currentView,
-  onViewChange,
-  platformLanguage,
-  onPlatformLanguageChange
+  onViewChange
 }: ChatSidebarProps) {
+  const { platformLanguage, setPlatformLanguage } = useLanguage();
   const { state } = useSidebar();
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -301,8 +299,6 @@ export function ChatSidebar({
         onOpenChange={setShowSettings}
         selectedModel={selectedModel}
         onModelChange={onModelChange}
-        platformLanguage={platformLanguage}
-        onPlatformLanguageChange={onPlatformLanguageChange}
       />
 
       <AuthDialog 

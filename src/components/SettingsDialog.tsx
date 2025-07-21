@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { X, Play, Trash2, Shield, Download, Bot } from 'lucide-react';
 import { SystemPromptsDialog } from './SystemPromptsDialog';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Dialog,
   DialogContent,
@@ -26,8 +27,6 @@ interface SettingsDialogProps {
   onOpenChange: (open: boolean) => void;
   selectedModel: string;
   onModelChange: (model: string) => void;
-  platformLanguage: string;
-  onPlatformLanguageChange: (language: string) => void;
   currentSystemPrompt?: any;
   onSystemPromptChange?: (prompt: any) => void;
 }
@@ -41,16 +40,15 @@ const settingsSections = [
   { id: 'account', label: 'Account', icon: '👤' },
 ];
 
-export function SettingsDialog({ 
-  open, 
-  onOpenChange, 
-  selectedModel, 
+export const SettingsDialog = ({
+  open,
+  onOpenChange,
+  selectedModel,
   onModelChange,
-  platformLanguage,
-  onPlatformLanguageChange,
   currentSystemPrompt,
-  onSystemPromptChange 
-}: SettingsDialogProps) {
+  onSystemPromptChange,
+}: SettingsDialogProps) => {
+  const { platformLanguage, setPlatformLanguage } = useLanguage();
   const [activeSection, setActiveSection] = useState('general');
   const [spokenLanguage, setSpokenLanguage] = useState('Auto-detect');
   const [voice, setVoice] = useState('Ember');
@@ -63,27 +61,7 @@ export function SettingsDialog({
   const [deleteAccountLoading, setDeleteAccountLoading] = useState(false);
   const [systemPromptsOpen, setSystemPromptsOpen] = useState(false);
 
-  // Apply language changes to document immediately
-  useEffect(() => {
-    const langCode = platformLanguage.toLowerCase().split(' ')[0];
-    document.documentElement.lang = langCode;
-    
-    // Store language preference immediately
-    localStorage.setItem('platformLanguage', platformLanguage);
-    
-    // Trigger immediate UI updates with a slight delay to ensure state is updated
-    setTimeout(() => {
-      document.dispatchEvent(new CustomEvent('languageChanged', { 
-        detail: { language: platformLanguage, langCode },
-        bubbles: true
-      }));
-    }, 0);
-    
-    // Also trigger immediate parent component update
-    if (onPlatformLanguageChange) {
-      onPlatformLanguageChange(platformLanguage);
-    }
-  }, [platformLanguage, onPlatformLanguageChange]);
+  // Language changes are now handled automatically by LanguageContext
 
   const playVoiceSample = () => {
     console.log(`Playing ${voice} voice sample`);
@@ -165,7 +143,7 @@ export function SettingsDialog({
             Changes site, AI, and chat language
           </p>
         </div>
-        <Select value={platformLanguage} onValueChange={onPlatformLanguageChange}>
+        <Select value={platformLanguage} onValueChange={setPlatformLanguage}>
           <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>

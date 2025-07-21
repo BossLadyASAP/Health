@@ -4,7 +4,11 @@ import { ChatSidebar } from '@/components/ChatSidebar';
 import { ChatInterface } from '@/components/ChatInterface';
 import { HealthTracker } from '@/components/HealthTracker';
 import { SettingsDialog } from '@/components/SettingsDialog';
+import { SystemPromptsDialog } from '@/components/SystemPromptsDialog';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
+import { Settings, Activity } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CreditProvider } from '@/context/CreditContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Message, Conversation } from '@/types';
@@ -14,53 +18,13 @@ function IndexContent() {
   const [activeConversationId, setActiveConversationId] = useState('');
   const [selectedModel, setSelectedModel] = useState('GPT-4');
   const [currentView, setCurrentView] = useState<'chat' | 'tracker'>('chat');
-  const [platformLanguage, setPlatformLanguage] = useState(() => {
-    // Initialize from localStorage or default to 'Auto-detect'
-    return localStorage.getItem('platformLanguage') || 'Auto-detect';
-  });
+  const { platformLanguage, setPlatformLanguage } = useLanguage();
   const [currentSystemPrompt, setCurrentSystemPrompt] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [languageUpdateKey, setLanguageUpdateKey] = useState(0);
 
   const { user, loading } = useAuth();
 
-  // Initialize language from localStorage and listen for changes
-  useEffect(() => {
-    const handleLanguageChange = (event: CustomEvent) => {
-      const newLanguage = event.detail.language;
-      setPlatformLanguage(newLanguage);
-      
-      // Apply language changes immediately to document
-      const langCode = newLanguage.toLowerCase().split(' ')[0];
-      document.documentElement.lang = langCode;
-      
-      // Force update of all text content by adding a data attribute
-      document.body.setAttribute('data-language', langCode);
-      
-      // Force re-render of all components by updating key
-      setLanguageUpdateKey(prev => prev + 1);
-      
-      // Dispatch a custom event to notify all components
-      window.dispatchEvent(new CustomEvent('forceLanguageUpdate', { 
-        detail: { language: newLanguage, langCode } 
-      }));
-      
-      console.log('Language changed to:', newLanguage, 'Code:', langCode);
-    };
-
-    document.addEventListener('languageChanged', handleLanguageChange as EventListener);
-    
-    return () => {
-      document.removeEventListener('languageChanged', handleLanguageChange as EventListener);
-    };
-  }, []);
-
-  // Apply initial language on mount
-  useEffect(() => {
-    const langCode = platformLanguage.toLowerCase().split(' ')[0];
-    document.documentElement.lang = langCode;
-    document.body.setAttribute('data-language', langCode);
-  }, [platformLanguage]);
+  // Language is now handled by LanguageContext - no additional setup needed
 
   // Load conversations when user is authenticated
   useEffect(() => {
@@ -368,8 +332,6 @@ function IndexContent() {
           onModelChange={setSelectedModel}
           currentView={currentView}
           onViewChange={setCurrentView}
-          platformLanguage={platformLanguage}
-          onPlatformLanguageChange={setPlatformLanguage}
         />
         
         <SettingsDialog
@@ -377,8 +339,6 @@ function IndexContent() {
           onOpenChange={setSettingsOpen}
           selectedModel={selectedModel}
           onModelChange={setSelectedModel}
-          platformLanguage={platformLanguage}
-          onPlatformLanguageChange={setPlatformLanguage}
           currentSystemPrompt={currentSystemPrompt}
           onSystemPromptChange={setCurrentSystemPrompt}
         />
@@ -408,9 +368,11 @@ function IndexContent() {
 const Index = () => {
   return (
     <AuthProvider>
-      <CreditProvider>
-        <IndexContent />
-      </CreditProvider>
+      <LanguageProvider>
+        <CreditProvider>
+          <IndexContent />
+        </CreditProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 };
