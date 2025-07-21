@@ -130,7 +130,7 @@ export function ChatSidebar({
                     </Button>
                     <div className="flex items-center justify-center">
                       <span className="text-sm font-medium text-gray-700">
-                        {profile?.full_name || profile?.first_name || 'Patient'}
+                        {user?.full_name || user?.first_name || 'Patient'}
                       </span>
                     </div>
                   </>
