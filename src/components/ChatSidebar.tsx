@@ -145,7 +145,7 @@ export function ChatSidebar({
             )}
           </div>
           
-          {!isCollapsed && currentView === 'chat' && user && (
+          {!isCollapsed && (currentView === 'chat' || currentView === 'tracker') && user && (
             <div className="space-y-2">
               {/* Patient Information Button */}
               <Button

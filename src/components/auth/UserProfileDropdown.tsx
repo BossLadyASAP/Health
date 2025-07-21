@@ -20,12 +20,6 @@ export function UserProfileDropdown({ onSettingsClick }: UserProfileDropdownProp
   const { user, profile, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleUpgradePlan = () => {
-    // Mock subscription/billing integration
-    console.log('Upgrade plan clicked');
-    setIsOpen(false);
-  };
-
   const handleHelp = () => {
     window.open('https://help.example.com', '_blank');
     setIsOpen(false);
@@ -67,10 +61,6 @@ export function UserProfileDropdown({ onSettingsClick }: UserProfileDropdownProp
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
-        <DropdownMenuItem onClick={handleUpgradePlan}>
-          <TrendingUp className="h-4 w-4 mr-2" />
-          Upgrade my plan
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={onSettingsClick}>
           <Settings className="h-4 w-4 mr-2" />
           Settings

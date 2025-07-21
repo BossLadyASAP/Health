@@ -6,7 +6,7 @@ import { VoiceInput } from '@/components/VoiceInput';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Message } from '@/types';
-import { useCreditContext } from '@/context/CreditContext';
+
 import { useAuth } from '@/hooks/useAuth';
 import { AuthDialog } from './auth/AuthDialog';
 
@@ -56,7 +56,7 @@ function MessageBubble({ message }: { message: Message }) {
 }
 
 export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProps) {
-  const { credits, useCredit } = useCreditContext();
+
   const { user } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [message, setMessage] = useState('');
@@ -75,11 +75,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      if (credits <= 0) {
-        alert("You're out of free credits. Please sign in for more.");
-        return;
-      }
-      useCredit();
+
       onSendMessage(message.trim());
       setMessage('');
     }
@@ -109,11 +105,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
         <h1 className="text-xl font-semibold text-gray-800">
           {conversation?.title || 'New Conversation'}
         </h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-600">
-            Credits: {credits}
-          </div>
-        </div>
+
       </div>
 
       {/* Messages */}

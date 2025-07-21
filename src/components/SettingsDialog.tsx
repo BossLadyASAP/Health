@@ -42,7 +42,7 @@ export const SettingsDialog = ({
   currentSystemPrompt,
   onSystemPromptChange,
 }: SettingsDialogProps) => {
-  const { platformLanguage, setPlatformLanguage } = useLanguage();
+  const { platformLanguage, setPlatformLanguage, voiceLanguage, setVoiceLanguage } = useLanguage();
   const { t } = useTranslation();
   
   // Translatable settings sections
@@ -57,7 +57,6 @@ export const SettingsDialog = ({
   const [activeSection, setActiveSection] = useState('general');
   const [spokenLanguage, setSpokenLanguage] = useState('Auto-detect');
   const [voice, setVoice] = useState('Ember');
-  const [voiceLanguage, setVoiceLanguage] = useState('Auto-detect');
   const [followUpSuggestions, setFollowUpSuggestions] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);

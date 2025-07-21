@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
-import { Copy, ThumbsUp, ThumbsDown, User, Bot } from 'lucide-react';
+import { Copy, ThumbsUp, ThumbsDown, User, Bot, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MessageBubbleProps {
   message: Message;
@@ -12,8 +13,59 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, onCopy }: MessageBubbleProps) {
   const [showActions, setShowActions] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { voiceLanguage } = useLanguage();
 
   const isUser = message.isUser;
+
+  const handlePlayAudio = async () => {
+    if (isPlaying) {
+      // Stop current audio
+      speechSynthesis.cancel();
+      setIsPlaying(false);
+      return;
+    }
+
+    try {
+      setIsPlaying(true);
+      const utterance = new SpeechSynthesisUtterance(message.content);
+      
+      // Set language based on voice language preference
+      const languageMap: { [key: string]: string } = {
+        'English': 'en-US',
+        'French': 'fr-FR',
+        'Spanish': 'es-ES',
+        'German': 'de-DE',
+        'Portuguese': 'pt-PT',
+        'Italian': 'it-IT',
+        'Dutch': 'nl-NL',
+        'Russian': 'ru-RU',
+        'Chinese': 'zh-CN',
+        'Japanese': 'ja-JP',
+        'Korean': 'ko-KR',
+        'Arabic': 'ar-SA',
+        'Hindi': 'hi-IN',
+        'Auto-detect': 'en-US'
+      };
+      
+      utterance.lang = languageMap[voiceLanguage] || 'en-US';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
+      
+      utterance.onerror = () => {
+        setIsPlaying(false);
+      };
+      
+      speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      setIsPlaying(false);
+    }
+  };
 
   return (
     <div 
@@ -49,6 +101,16 @@ export function MessageBubble({ message, onCopy }: MessageBubbleProps) {
         {/* Message Actions */}
         {showActions && !isUser && (
           <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handlePlayAudio}
+              className="h-7 w-7 p-0 hover:bg-gray-200"
+              title="Listen to response"
+            >
+              {isPlaying ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+            </Button>
+            
             <Button
               size="sm"
               variant="ghost"

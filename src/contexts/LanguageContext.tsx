@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface LanguageContextType {
   platformLanguage: string;
   setPlatformLanguage: (language: string) => void;
+  voiceLanguage: string;
+  setVoiceLanguage: (language: string) => void;
   languageCode: string;
   forceUpdate: () => void;
 }
@@ -17,6 +19,11 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [platformLanguage, setPlatformLanguageState] = useState(() => {
     // Initialize from localStorage or default to 'Auto-detect'
     return localStorage.getItem('platformLanguage') || 'Auto-detect';
+  });
+  
+  const [voiceLanguage, setVoiceLanguageState] = useState(() => {
+    // Initialize from localStorage or default to 'Auto-detect'
+    return localStorage.getItem('voiceLanguage') || 'Auto-detect';
   });
 
   const [updateKey, setUpdateKey] = useState(0);
@@ -40,6 +47,15 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     
     console.log('Language changed globally to:', language, 'Code:', langCode);
   };
+  
+  const setVoiceLanguage = (language: string) => {
+    setVoiceLanguageState(language);
+    
+    // Store in localStorage immediately
+    localStorage.setItem('voiceLanguage', language);
+    
+    console.log('Voice language changed to:', language);
+  };
 
   const forceUpdate = () => {
     setUpdateKey(prev => prev + 1);
@@ -54,6 +70,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const contextValue: LanguageContextType = {
     platformLanguage,
     setPlatformLanguage,
+    voiceLanguage,
+    setVoiceLanguage,
     languageCode,
     forceUpdate
   };
