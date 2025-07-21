@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { VoiceInput } from '@/components/VoiceInput';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Message } from '@/types';
 import { useCreditContext } from '@/context/CreditContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -61,6 +62,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
   const [message, setMessage] = useState('');
   const [isVoiceListening, setIsVoiceListening] = useState(false);
   const { platformLanguage, languageCode } = useLanguage();
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={t('Type your message...')}
               className="min-h-[60px] resize-none"
               rows={3}
             />
@@ -157,7 +159,7 @@ export function ChatInterface({ conversation, onSendMessage }: ChatInterfaceProp
               className="flex items-center gap-2"
             >
               <Send className="h-4 w-4" />
-              Send
+              {t('Send')}
             </Button>
           </div>
         </form>

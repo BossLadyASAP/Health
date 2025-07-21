@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { X, Play, Trash2, Shield, Download, Bot } from 'lucide-react';
 import { SystemPromptsDialog } from './SystemPromptsDialog';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   Dialog,
   DialogContent,
@@ -31,14 +32,7 @@ interface SettingsDialogProps {
   onSystemPromptChange?: (prompt: any) => void;
 }
 
-const settingsSections = [
-  { id: 'general', label: 'General', icon: '⚙️' },
-  { id: 'system-prompts', label: 'AI Prompts', icon: '🤖' },
-  { id: 'notifications', label: 'Notifications', icon: '🔔' },
-  { id: 'data-controls', label: 'Data controls', icon: '🛡️' },
-  { id: 'security', label: 'Security', icon: '🔒' },
-  { id: 'account', label: 'Account', icon: '👤' },
-];
+// Settings sections will be translated in the component
 
 export const SettingsDialog = ({
   open,
@@ -49,6 +43,17 @@ export const SettingsDialog = ({
   onSystemPromptChange,
 }: SettingsDialogProps) => {
   const { platformLanguage, setPlatformLanguage } = useLanguage();
+  const { t } = useTranslation();
+  
+  // Translatable settings sections
+  const settingsSections = [
+    { id: 'general', label: t('General'), icon: '⚙️' },
+    { id: 'system-prompts', label: t('AI Prompts'), icon: '🤖' },
+    { id: 'notifications', label: t('Notifications'), icon: '🔔' },
+    { id: 'data-controls', label: t('Data controls'), icon: '🛡️' },
+    { id: 'security', label: t('Security'), icon: '🔒' },
+    { id: 'account', label: t('Account'), icon: '👤' },
+  ];
   const [activeSection, setActiveSection] = useState('general');
   const [spokenLanguage, setSpokenLanguage] = useState('Auto-detect');
   const [voice, setVoice] = useState('Ember');
@@ -138,9 +143,9 @@ export const SettingsDialog = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium">Platform Language</h3>
+          <h3 className="text-sm font-medium">{t('Platform Language')}</h3>
           <p className="text-xs text-gray-500 mt-1">
-            Changes site, AI, and chat language
+            {t('Changes site, AI, and chat language')}
           </p>
         </div>
         <Select value={platformLanguage} onValueChange={setPlatformLanguage}>
@@ -174,9 +179,9 @@ export const SettingsDialog = ({
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium">Spoken language</h3>
+          <h3 className="text-sm font-medium">{t('Spoken language')}</h3>
           <p className="text-xs text-gray-500 mt-1">
-            Automatically detected from your speech input
+            {t('Automatically detected from your speech input')}
           </p>
         </div>
         <div className="text-sm text-gray-600">
@@ -186,7 +191,7 @@ export const SettingsDialog = ({
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium">Voice</h3>
+          <h3 className="text-sm font-medium">{t('Voice')}</h3>
         </div>
         <div className="flex items-center gap-2">
           <Button 
@@ -214,7 +219,7 @@ export const SettingsDialog = ({
 
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-medium">Show follow up suggestions in chats</h3>
+          <h3 className="text-sm font-medium">{t('Show follow up suggestions in chats')}</h3>
         </div>
         <Switch
           checked={followUpSuggestions}

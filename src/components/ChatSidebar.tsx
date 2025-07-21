@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import { 
   MessageSquare, 
   Plus, 
@@ -61,6 +62,7 @@ export function ChatSidebar({
   onViewChange
 }: ChatSidebarProps) {
   const { platformLanguage, setPlatformLanguage } = useLanguage();
+  const { t } = useTranslation();
   const { state } = useSidebar();
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -121,7 +123,7 @@ export function ChatSidebar({
                       className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
                     >
                       <Plus className="h-4 w-4" />
-                      New Chat
+                      {t('New Chat')}
                     </Button>
                     
                     <UserProfileDropdown onSettingsClick={() => setShowSettings(true)} />
@@ -145,7 +147,7 @@ export function ChatSidebar({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search chats..."
+                  placeholder={t('Search chats...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 bg-gray-50 border-gray-200"
@@ -159,7 +161,7 @@ export function ChatSidebar({
                   className="flex items-center gap-1 text-xs h-7"
                 >
                   <Calendar className="h-3 w-3" />
-                  Date
+                  {t('Date')}
                 </Button>
                 <Button
                   size="sm"
